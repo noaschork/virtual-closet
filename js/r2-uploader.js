@@ -125,7 +125,23 @@ export class R2Uploader {
 
         const r2 = this.settings.r2Config;
         const key = `closet-items/${Date.now()}-${filename}`;
-        const url = `https://${r2.accountId}.r2.cloudflarestorage.com/${r2.bucketName}/${key}`;
+
+        // Use public URL if available, otherwise fall back to private endpoint
+        // IMPORTANT: Private endpoint (accountId.r2.cloudflarestorage.com) does NOT support CORS from browsers
+        // Must use public R2.dev domain or custom domain for browser uploads
+        let uploadUrl;
+        let uploadHost;
+
+        if (r2.publicUrl) {
+            // Extract domain from public URL (e.g., pub-xxxxx.r2.dev from https://pub-xxxxx.r2.dev)
+            const publicDomain = r2.publicUrl.replace(/^https?:\/\//, '').replace(/\/$/, '');
+            uploadUrl = `https://${publicDomain}/${key}`;
+            uploadHost = publicDomain;
+        } else {
+            // Fallback to private endpoint (won't work from browser without CORS, but try anyway)
+            uploadUrl = `https://${r2.accountId}.r2.cloudflarestorage.com/${r2.bucketName}/${key}`;
+            uploadHost = `${r2.accountId}.r2.cloudflarestorage.com`;
+        }
 
         // Read file as ArrayBuffer
         const arrayBuffer = await file.arrayBuffer();
@@ -133,16 +149,16 @@ export class R2Uploader {
 
         // Prepare headers
         const headers = {
-            'host': `${r2.accountId}.r2.cloudflarestorage.com`,
+            'host': uploadHost,
             'content-type': file.type || 'image/jpeg',
             'content-length': payload.length.toString()
         };
 
         // Generate signature
-        await this.generateSignature('PUT', url, headers, payload);
+        await this.generateSignature('PUT', uploadUrl, headers, payload);
 
         // Upload file
-        const response = await fetch(url, {
+        const response = await fetch(uploadUrl, {
             method: 'PUT',
             headers: headers,
             body: payload
@@ -157,7 +173,7 @@ export class R2Uploader {
         if (r2.publicUrl) {
             return `${r2.publicUrl}/${key}`;
         } else {
-            return url; // This won't be publicly accessible without a public bucket
+            return uploadUrl; // This won't be publicly accessible without a public bucket
         }
     }
 
