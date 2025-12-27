@@ -117,63 +117,44 @@ export class R2Uploader {
         return kSigning;
     }
 
-    // Upload file to R2
+    // Upload file to R2 via Cloudflare Worker
     async uploadFile(file, filename) {
-        if (!this.isConfigured()) {
-            throw new Error('R2 is not configured. Please add your R2 credentials in Settings.');
-        }
-
         const r2 = this.settings.r2Config;
-        const key = `closet-items/${Date.now()}-${filename}`;
 
-        // Use public URL if available, otherwise fall back to private endpoint
-        // IMPORTANT: Private endpoint (accountId.r2.cloudflarestorage.com) does NOT support CORS from browsers
-        // Must use public R2.dev domain or custom domain for browser uploads
-        let uploadUrl;
-        let uploadHost;
-
-        if (r2.publicUrl) {
-            // Extract domain from public URL (e.g., pub-xxxxx.r2.dev from https://pub-xxxxx.r2.dev)
-            const publicDomain = r2.publicUrl.replace(/^https?:\/\//, '').replace(/\/$/, '');
-            uploadUrl = `https://${publicDomain}/${key}`;
-            uploadHost = publicDomain;
-        } else {
-            // Fallback to private endpoint (won't work from browser without CORS, but try anyway)
-            uploadUrl = `https://${r2.accountId}.r2.cloudflarestorage.com/${r2.bucketName}/${key}`;
-            uploadHost = `${r2.accountId}.r2.cloudflarestorage.com`;
+        // Check if worker URL is configured
+        if (!r2.workerUrl) {
+            console.warn('No Cloudflare Worker URL configured. Falling back to Data URLs.');
+            console.warn('Configure workerUrl in Settings to enable R2 uploads.');
+            return await this.fileToDataURL(file);
         }
 
-        // Read file as ArrayBuffer
-        const arrayBuffer = await file.arrayBuffer();
-        const payload = new Uint8Array(arrayBuffer);
+        try {
+            // Upload via Cloudflare Worker
+            const formData = new FormData();
+            formData.append('file', file);
 
-        // Prepare headers
-        const headers = {
-            'host': uploadHost,
-            'content-type': file.type || 'image/jpeg',
-            'content-length': payload.length.toString()
-        };
+            const response = await fetch(r2.workerUrl, {
+                method: 'POST',
+                body: formData,
+            });
 
-        // Generate signature
-        await this.generateSignature('PUT', uploadUrl, headers, payload);
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Upload failed');
+            }
 
-        // Upload file
-        const response = await fetch(uploadUrl, {
-            method: 'PUT',
-            headers: headers,
-            body: payload
-        });
+            const data = await response.json();
 
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`Upload failed: ${response.status} ${errorText}`);
-        }
+            if (!data.success || !data.url) {
+                throw new Error('Invalid response from upload worker');
+            }
 
-        // Return public URL
-        if (r2.publicUrl) {
-            return `${r2.publicUrl}/${key}`;
-        } else {
-            return uploadUrl; // This won't be publicly accessible without a public bucket
+            // Return the public URL from R2
+            return data.url;
+        } catch (error) {
+            console.error('Worker upload failed:', error);
+            console.warn('Falling back to Data URL storage');
+            return await this.fileToDataURL(file);
         }
     }
 
