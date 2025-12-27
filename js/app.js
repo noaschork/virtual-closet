@@ -496,11 +496,7 @@ class VirtualClosetApp {
         document.getElementById('openai-key').value = settings.openaiKey || '';
         document.getElementById('weather-key').value = settings.weatherKey || '';
         document.getElementById('weather-location').value = settings.weatherLocation || '';
-        document.getElementById('r2-account-id').value = settings.r2Config.accountId || '';
-        document.getElementById('r2-access-key').value = settings.r2Config.accessKeyId || '';
-        document.getElementById('r2-secret-key').value = settings.r2Config.secretAccessKey || '';
-        document.getElementById('r2-bucket-name').value = settings.r2Config.bucketName || 'virtual-closet';
-        document.getElementById('r2-public-url').value = settings.r2Config.publicUrl || '';
+        document.getElementById('r2-worker-url').value = settings.r2Config.workerUrl || '';
 
         // Save settings
         document.getElementById('save-settings-btn').addEventListener('click', () => this.saveSettings());
@@ -520,11 +516,7 @@ class VirtualClosetApp {
             weatherKey: document.getElementById('weather-key').value.trim(),
             weatherLocation: document.getElementById('weather-location').value.trim(),
             r2Config: {
-                accountId: document.getElementById('r2-account-id').value.trim(),
-                accessKeyId: document.getElementById('r2-access-key').value.trim(),
-                secretAccessKey: document.getElementById('r2-secret-key').value.trim(),
-                bucketName: document.getElementById('r2-bucket-name').value.trim() || 'virtual-closet',
-                publicUrl: document.getElementById('r2-public-url').value.trim()
+                workerUrl: document.getElementById('r2-worker-url').value.trim()
             }
         };
 
