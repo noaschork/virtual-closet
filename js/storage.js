@@ -244,11 +244,7 @@ export class Storage {
             weatherKey: '',
             weatherLocation: '',
             r2Config: {
-                accountId: '',
-                accessKeyId: '',
-                secretAccessKey: '',
-                bucketName: 'virtual-closet',
-                publicUrl: ''
+                workerUrl: '' // Cloudflare Worker URL for R2 uploads
             }
         };
     }
