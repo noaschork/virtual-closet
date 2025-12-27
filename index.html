@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Closet - AI-Powered Outfit Planner</title>
+    <link rel="stylesheet" href="css/styles.css?v=2">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="logo">✨ Virtual Closet</h1>
+            <ul class="nav-menu">
+                <li><a href="#" data-page="closet" class="nav-link active">My Closet</a></li>
+                <li><a href="#" data-page="outfits" class="nav-link">Outfit Generator</a></li>
+                <li><a href="#" data-page="planner" class="nav-link">Weekly Planner</a></li>
+                <li><a href="#" data-page="vision-board" class="nav-link">Vision Board</a></li>
+                <li><a href="#" data-page="settings" class="nav-link">Settings</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <!-- My Closet Page -->
+        <div id="closet-page" class="page active">
+            <div class="page-header">
+                <h2>My Closet</h2>
+                <button class="btn btn-primary" id="add-item-btn">+ Add Item</button>
+            </div>
+
+            <div class="filters">
+                <select id="filter-type" class="filter-select">
+                    <option value="">All Types</option>
+                    <option value="tops">Tops</option>
+                    <option value="bottoms">Bottoms</option>
+                    <option value="dresses">Dresses</option>
+                    <option value="outerwear">Outerwear</option>
+                    <option value="shoes">Shoes</option>
+                    <option value="accessories">Accessories</option>
+                </select>
+
+                <select id="filter-color" class="filter-select">
+                    <option value="">All Colors</option>
+                    <option value="black">Black</option>
+                    <option value="white">White</option>
+                    <option value="gray">Gray</option>
+                    <option value="brown">Brown</option>
+                    <option value="beige">Beige</option>
+                    <option value="red">Red</option>
+                    <option value="pink">Pink</option>
+                    <option value="orange">Orange</option>
+                    <option value="yellow">Yellow</option>
+                    <option value="green">Green</option>
+                    <option value="blue">Blue</option>
+                    <option value="purple">Purple</option>
+                    <option value="multicolor">Multicolor</option>
+                </select>
+
+                <select id="filter-silhouette" class="filter-select">
+                    <option value="">All Silhouettes</option>
+                    <option value="fitted">Fitted</option>
+                    <option value="loose">Loose</option>
+                    <option value="oversized">Oversized</option>
+                    <option value="flowy">Flowy</option>
+                    <option value="structured">Structured</option>
+                </select>
+
+                <input type="text" id="search-items" class="search-input" placeholder="Search items...">
+            </div>
+
+            <div id="closet-grid" class="item-grid">
+                <!-- Items will be dynamically added here -->
+            </div>
+        </div>
+
+        <!-- Outfit Generator Page -->
+        <div id="outfits-page" class="page">
+            <div class="page-header">
+                <h2>AI Outfit Generator</h2>
+                <button class="btn btn-primary" id="generate-outfit-btn">✨ Generate Outfit</button>
+            </div>
+
+            <div class="outfit-options">
+                <label>
+                    Occasion:
+                    <select id="outfit-occasion">
+                        <option value="">Any</option>
+                        <option value="casual">Casual</option>
+                        <option value="work">Work</option>
+                        <option value="formal">Formal/Gala</option>
+                        <option value="date">Date Night</option>
+                        <option value="workout">Workout</option>
+                        <option value="travel">Travel</option>
+                    </select>
+                </label>
+
+                <label>
+                    Weather:
+                    <select id="outfit-weather">
+                        <option value="">Any</option>
+                        <option value="hot">Hot (75°F+)</option>
+                        <option value="warm">Warm (60-75°F)</option>
+                        <option value="cool">Cool (45-60°F)</option>
+                        <option value="cold">Cold (below 45°F)</option>
+                        <option value="rainy">Rainy</option>
+                    </select>
+                </label>
+            </div>
+
+            <div id="outfit-display" class="outfit-display">
+                <p class="placeholder-text">Click "Generate Outfit" to create an AI-powered outfit combination!</p>
+            </div>
+
+            <div id="outfit-voting" class="outfit-voting" style="display: none;">
+                <button class="btn btn-success vote-btn" id="vote-yes">👍 Love It</button>
+                <button class="btn btn-danger vote-btn" id="vote-no">👎 Not My Style</button>
+            </div>
+
+            <div class="liked-outfits-section">
+                <h3>Saved Outfits</h3>
+                <div id="liked-outfits-grid" class="saved-outfits-grid">
+                    <!-- Saved outfits will appear here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Weekly Planner Page -->
+        <div id="planner-page" class="page">
+            <div class="page-header">
+                <h2>Weekly Outfit Planner</h2>
+                <button class="btn btn-primary" id="generate-week-btn">🗓️ Plan My Week</button>
+            </div>
+
+            <div class="calendar-section">
+                <h3>My Events</h3>
+                <button class="btn btn-secondary" id="add-event-btn">+ Add Event</button>
+                <div id="events-list" class="events-list">
+                    <!-- Events will be listed here -->
+                </div>
+            </div>
+
+            <div class="weather-section">
+                <h3>Weekly Forecast</h3>
+                <div id="weather-forecast" class="weather-forecast">
+                    <p class="placeholder-text">Weather data will appear here</p>
+                </div>
+            </div>
+
+            <div class="weekly-outfits-section">
+                <h3>This Week's Outfits</h3>
+                <div id="weekly-outfits" class="weekly-grid">
+                    <!-- Weekly outfit plan will appear here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Vision Board Page -->
+        <div id="vision-board-page" class="page">
+            <div class="page-header">
+                <h2>Vision Board</h2>
+                <button class="btn btn-primary" id="create-board-btn">+ New Board</button>
+            </div>
+
+            <div class="board-filters">
+                <input type="text" id="board-name-input" class="board-name-input" placeholder="Board name (e.g., France Trip)">
+
+                <div class="filter-checkboxes">
+                    <label><input type="checkbox" class="board-filter" value="tops"> Tops</label>
+                    <label><input type="checkbox" class="board-filter" value="bottoms"> Bottoms</label>
+                    <label><input type="checkbox" class="board-filter" value="dresses"> Dresses</label>
+                    <label><input type="checkbox" class="board-filter" value="outerwear"> Outerwear</label>
+                    <label><input type="checkbox" class="board-filter" value="shoes"> Shoes</label>
+                    <label><input type="checkbox" class="board-filter" value="accessories"> Accessories</label>
+                </div>
+            </div>
+
+            <div id="vision-boards-container" class="vision-boards-container">
+                <!-- Vision boards will be displayed here -->
+            </div>
+        </div>
+
+        <!-- Settings Page -->
+        <div id="settings-page" class="page">
+            <div class="page-header">
+                <h2>Settings</h2>
+            </div>
+
+            <div class="settings-section">
+                <h3>API Configuration</h3>
+
+                <div class="setting-group">
+                    <label for="openai-key">OpenAI API Key:</label>
+                    <input type="password" id="openai-key" class="setting-input" placeholder="sk-...">
+                    <small>Get your API key from <a href="https://platform.openai.com/api-keys" target="_blank">OpenAI Platform</a></small>
+                </div>
+
+                <div class="setting-group">
+                    <label for="weather-key">Weather API Key:</label>
+                    <input type="password" id="weather-key" class="setting-input" placeholder="Your weather API key">
+                    <small>Get a free key from <a href="https://www.weatherapi.com/" target="_blank">WeatherAPI.com</a></small>
+                </div>
+
+                <div class="setting-group">
+                    <label for="weather-location">Your Location:</label>
+                    <input type="text" id="weather-location" class="setting-input" placeholder="City, Country (e.g., Paris, France)">
+                </div>
+
+                <div class="setting-group">
+                    <h4>Cloudflare R2 Configuration (Optional - For Unlimited Storage)</h4>
+
+                    <label for="r2-worker-url">Worker URL:</label>
+                    <input type="text" id="r2-worker-url" class="setting-input" placeholder="https://virtual-closet-uploader.YOUR-USERNAME.workers.dev">
+                    <small>URL of your deployed Cloudflare Worker. Leave empty to use localStorage (limited to ~50-100 images)</small>
+                </div>
+
+                <button class="btn btn-primary" id="save-settings-btn">Save Settings</button>
+            </div>
+
+            <div class="settings-section">
+                <h3>Data Management</h3>
+                <button class="btn btn-secondary" id="export-data-btn">Export All Data</button>
+                <button class="btn btn-secondary" id="import-data-btn">Import Data</button>
+                <input type="file" id="import-file-input" accept=".json" style="display: none;">
+                <button class="btn btn-danger" id="clear-data-btn">Clear All Data</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add Item Modal -->
+    <div id="add-item-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Add New Item</h2>
+
+            <div class="upload-section">
+                <div class="upload-option">
+                    <h4>Upload from Device</h4>
+                    <input type="file" id="file-upload" accept="image/*" multiple>
+                    <label for="file-upload" class="upload-label">Choose Files</label>
+                </div>
+
+                <div class="upload-option">
+                    <h4>Or Paste URL</h4>
+                    <input type="text" id="url-input" placeholder="https://example.com/image.jpg">
+                    <button class="btn btn-secondary" id="scrape-url-btn">Fetch Image</button>
+                </div>
+            </div>
+
+            <div id="preview-section" class="preview-section" style="display: none;">
+                <img id="item-preview" src="" alt="Preview">
+
+                <div class="item-details">
+                    <label>
+                        Type:
+                        <select id="item-type" required>
+                            <option value="">Select type</option>
+                            <option value="tops">Tops</option>
+                            <option value="bottoms">Bottoms</option>
+                            <option value="dresses">Dresses</option>
+                            <option value="outerwear">Outerwear</option>
+                            <option value="shoes">Shoes</option>
+                            <option value="accessories">Accessories</option>
+                        </select>
+                    </label>
+
+                    <label>
+                        Color:
+                        <select id="item-color" required>
+                            <option value="">Select color</option>
+                            <option value="black">Black</option>
+                            <option value="white">White</option>
+                            <option value="gray">Gray</option>
+                            <option value="brown">Brown</option>
+                            <option value="beige">Beige</option>
+                            <option value="red">Red</option>
+                            <option value="pink">Pink</option>
+                            <option value="orange">Orange</option>
+                            <option value="yellow">Yellow</option>
+                            <option value="green">Green</option>
+                            <option value="blue">Blue</option>
+                            <option value="purple">Purple</option>
+                            <option value="multicolor">Multicolor</option>
+                        </select>
+                    </label>
+
+                    <label>
+                        Silhouette:
+                        <select id="item-silhouette" required>
+                            <option value="">Select silhouette</option>
+                            <option value="fitted">Fitted</option>
+                            <option value="loose">Loose</option>
+                            <option value="oversized">Oversized</option>
+                            <option value="flowy">Flowy</option>
+                            <option value="structured">Structured</option>
+                        </select>
+                    </label>
+
+                    <label>
+                        Notes (optional):
+                        <textarea id="item-notes" placeholder="Brand, material, occasion..."></textarea>
+                    </label>
+
+                    <button class="btn btn-primary" id="save-item-btn">Save to Closet</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Event Modal -->
+    <div id="add-event-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Add Event</h2>
+
+            <label>
+                Event Name:
+                <input type="text" id="event-name" placeholder="Work meeting, Dinner, etc.">
+            </label>
+
+            <label>
+                Date:
+                <input type="date" id="event-date">
+            </label>
+
+            <label>
+                Type:
+                <select id="event-type">
+                    <option value="casual">Casual</option>
+                    <option value="work">Work</option>
+                    <option value="formal">Formal/Gala</option>
+                    <option value="date">Date Night</option>
+                    <option value="workout">Workout</option>
+                    <option value="travel">Travel</option>
+                </select>
+            </label>
+
+            <button class="btn btn-primary" id="save-event-btn">Save Event</button>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay" style="display: none;">
+        <div class="spinner"></div>
+        <p>Processing...</p>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script type="module" src="js/app.js?v=2"></script>
+</body>
+</html>
