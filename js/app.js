@@ -88,6 +88,7 @@ class VirtualClosetApp {
         document.getElementById('filter-type').addEventListener('change', () => this.filterCloset());
         document.getElementById('filter-color').addEventListener('change', () => this.filterCloset());
         document.getElementById('filter-silhouette').addEventListener('change', () => this.filterCloset());
+        document.getElementById('filter-shoe-type').addEventListener('change', () => this.filterCloset());
         document.getElementById('search-items').addEventListener('input', () => this.filterCloset());
 
         // File upload
@@ -95,6 +96,17 @@ class VirtualClosetApp {
 
         // URL scraping
         document.getElementById('scrape-url-btn').addEventListener('click', () => this.handleURLScrape());
+
+        // Show/hide shoe type field based on item type
+        document.getElementById('item-type').addEventListener('change', (e) => {
+            const shoeTypeLabel = document.getElementById('shoe-type-label');
+            if (e.target.value === 'shoes') {
+                shoeTypeLabel.style.display = 'block';
+            } else {
+                shoeTypeLabel.style.display = 'none';
+                document.getElementById('item-shoe-type').value = '';
+            }
+        });
 
         // Save item
         document.getElementById('save-item-btn').addEventListener('click', () => this.saveItem());
@@ -170,6 +182,7 @@ class VirtualClosetApp {
         const type = document.getElementById('item-type').value;
         const color = document.getElementById('item-color').value;
         const silhouette = document.getElementById('item-silhouette').value;
+        const shoeType = document.getElementById('item-shoe-type').value;
         const notes = document.getElementById('item-notes').value;
 
         if (!type || !color || !silhouette) {
@@ -187,6 +200,7 @@ class VirtualClosetApp {
             type,
             color,
             silhouette,
+            shoeType: shoeType || null,
             notes
         };
 
@@ -203,6 +217,8 @@ class VirtualClosetApp {
         document.getElementById('item-type').value = '';
         document.getElementById('item-color').value = '';
         document.getElementById('item-silhouette').value = '';
+        document.getElementById('item-shoe-type').value = '';
+        document.getElementById('shoe-type-label').style.display = 'none';
         document.getElementById('item-notes').value = '';
         document.getElementById('preview-section').style.display = 'none';
         this.tempImageUrl = null;
@@ -219,6 +235,7 @@ class VirtualClosetApp {
         const typeFilter = document.getElementById('filter-type').value;
         const colorFilter = document.getElementById('filter-color').value;
         const silhouetteFilter = document.getElementById('filter-silhouette').value;
+        const shoeTypeFilter = document.getElementById('filter-shoe-type').value;
         const searchQuery = document.getElementById('search-items').value.toLowerCase();
 
         if (typeFilter) {
@@ -230,11 +247,15 @@ class VirtualClosetApp {
         if (silhouetteFilter) {
             items = items.filter(item => item.silhouette === silhouetteFilter);
         }
+        if (shoeTypeFilter) {
+            items = items.filter(item => item.shoeType === shoeTypeFilter);
+        }
         if (searchQuery) {
             items = items.filter(item =>
                 item.type.toLowerCase().includes(searchQuery) ||
                 item.color.toLowerCase().includes(searchQuery) ||
                 item.silhouette.toLowerCase().includes(searchQuery) ||
+                (item.shoeType && item.shoeType.toLowerCase().includes(searchQuery)) ||
                 (item.notes && item.notes.toLowerCase().includes(searchQuery))
             );
         }
