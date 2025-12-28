@@ -14,7 +14,7 @@ export class R2Uploader {
     // Check if R2 is configured
     isConfigured() {
         const r2 = this.settings.r2Config;
-        return r2.accountId && r2.accessKeyId && r2.secretAccessKey && r2.bucketName;
+        return r2.workerUrl && r2.workerUrl.trim() !== '';
     }
 
     // Generate AWS Signature V4 for R2
